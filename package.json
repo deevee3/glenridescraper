@@ -2,30 +2,50 @@
   "name": "glenridescraper",
   "version": "1.0.0",
   "type": "module",
-  "description": "[![npm version](https://img.shields.io/npm/v/playwright.svg)](https://www.npmjs.com/package/playwright) <!-- GEN:chromium-version-badge -->[![Chromium version](https://img.shields.io/badge/chromium-137.0.7151.40-blue.svg?logo=google-chrome)](https://www.chromium.org/Home)<!-- GEN:stop --> <!-- GEN:firefox-version-badge -->[![Firefox version](https://img.shields.io/badge/firefox-137.0-blue.svg?logo=firefoxbrowser)](https://www.mozilla.org/en-US/firefox/new/)<!-- GEN:stop --> <!-- GEN:webkit-version-badge -->[![WebKit version](https://img.shields.io/badge/webkit-18.4-blue.svg?logo=safari)](https://webkit.org/)<!-- GEN:stop --> [![Join Discord](https://img.shields.io/badge/join-discord-infomational)](https://aka.ms/playwright/discord)",
+  "description": "Google Maps Scraper API using Playwright",
   "main": "scraper.js",
-  "directories": {
-    "doc": "docs",
-    "example": "examples",
-    "test": "tests"
-  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node scraper.js",
+    "dev": "nodemon --inspect=0.0.0.0:9229 scraper.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docker:build": "docker build -t glenridescraper .",
+    "docker:run": "docker-compose up -d",
+    "docker:stop": "docker-compose down",
+    "lint": "eslint .",
+    "format": "prettier --write \"**/*.{js,json,md}\"",
+    "prepare": "playwright install chromium"
   },
-  "keywords": [],
+  "keywords": ["scraper", "google-maps", "playwright", "api"],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^16.5.0",
-    "ejs": "^3.1.10",
-    "express": "^5.1.0",
-    "express-rate-limit": "^7.5.0",
-    "express-slow-down": "^2.1.0",
-    "node-fetch": "^2.7.0",
-    "node-geocoder": "^4.4.1",
-    "openai": "^4.103.0",
-    "playwright-chromium": "^1.52.0",
-    "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7"
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^6.9.0",
+    "helmet": "^7.0.0",
+    "morgan": "^1.10.0",
+    "playwright": "^1.42.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "nodemon": "^3.0.3",
+    "prettier": "^3.1.1"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

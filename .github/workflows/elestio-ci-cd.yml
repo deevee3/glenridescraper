@@ -1,0 +1,51 @@
+name: Elestio CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run tests
+      run: npm test
+    
+    - name: Build Docker image
+      run: docker build -t glenridescraper .
+    
+    - name: Login to Docker Hub
+      if: github.ref == 'refs/heads/main'
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    
+    - name: Push to Docker Hub
+      if: github.ref == 'refs/heads/main'
+      run: |
+        docker tag glenridescraper ${{ secrets.DOCKERHUB_USERNAME }}/glenridescraper:latest
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/glenridescraper:latest
+    
+    - name: Notify Elestio
+      if: github.ref == 'refs/heads/main'
+      run: |
+        curl -X POST \
+          -H "Authorization: Bearer ${{ secrets.ELESTIO_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          -d '{"image": "${{ secrets.DOCKERHUB_USERNAME }}/glenridescraper:latest"}' \
+          https://api.elest.io/api/applications/${{ secrets.ELESTIO_APP_ID }}/deploy
