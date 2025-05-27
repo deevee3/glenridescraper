@@ -19,12 +19,12 @@ RUN apk add --no-cache \
 # Copy package files
 COPY package*.json ./
 
-
-# Install production dependencies only
-RUN npm ci --only=production
+# Install dependencies (using npm install instead of ci for better compatibility)
+RUN npm install --only=production
 
 # Copy application code
 COPY . .
+
 
 # Runtime stage
 FROM node:20-alpine
@@ -45,6 +45,7 @@ WORKDIR /app
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/scraper.js .
+COPY --from=builder /app/health.js .
 
 # Create necessary directories
 RUN mkdir -p ./data
@@ -62,7 +63,7 @@ ENV PLAYWRIGHT_BROWSERS_PATH=0
 EXPOSE 3000
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=3s \
+HEALTHCHECK --interval=30s --timeout=10s \
   CMD wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
 
 # Command to run the application
