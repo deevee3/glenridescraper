@@ -144,4 +144,78 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Error deleting search. Please try again.');
         }
     };
+
+    // Download history report
+    document.getElementById('downloadHistoryReport')?.addEventListener('click', () => {
+        const history = JSON.parse(localStorage.getItem('searchHistory') || '[]');
+        
+        if (history.length === 0) {
+            alert('No search history available to download.');
+            return;
+        }
+        
+        // Create CSV content
+        let csvContent = 'Search Term,Location,Date,Total Businesses,Reviewed,Review Percentage\n';
+        
+        // Add search summaries
+        history.forEach(item => {
+            const totalBusinesses = item.results?.length || 0;
+            const reviewedCount = item.results?.filter(biz => biz.reviewed).length || 0;
+            const reviewPercentage = totalBusinesses > 0 ? (reviewedCount / totalBusinesses * 100).toFixed(1) : 0;
+            const date = item.timestamp ? new Date(item.timestamp).toLocaleString() : 'Unknown date';
+            
+            csvContent += `"${item.searchTerm || 'Untitled Search'}",`;
+            csvContent += `"${item.location || 'No location'}",`;
+            csvContent += `"${date}",`;
+            csvContent += `${totalBusinesses},`;
+            csvContent += `${reviewedCount},`;
+            csvContent += `${reviewPercentage}%\n`;
+            
+            // Add reviewed businesses
+            const reviewedBusinesses = (item.results || []).filter(biz => biz.reviewed);
+            if (reviewedBusinesses.length > 0) {
+                csvContent += '\n,Reviewed Businesses\n';
+                csvContent += ',Name,Address,Rating,Review Count,Reviewed At\n';
+                
+                reviewedBusinesses.forEach(biz => {
+                    csvContent += ','; // Empty first column for indentation
+                    csvContent += `"${biz.name || 'Unknown Business'}",`;
+                    csvContent += `"${biz.address || biz.vicinity || biz.formatted_address || 'No address'}",`;
+                    csvContent += `${biz.rating || 'N/A'},`;
+                    csvContent += `${biz.user_ratings_total || 'N/A'},`;
+                    csvContent += `${biz.reviewedAt ? new Date(biz.reviewedAt).toLocaleString() : 'Unknown'}\n`;
+                });
+                
+                csvContent += '\n';
+            }
+            
+            // Add a separator between searches
+            csvContent += '\n';
+        });
+        
+        // Create download link
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        
+        link.setAttribute('href', url);
+        link.setAttribute('download', `business-search-report-${timestamp}.csv`);
+        link.style.visibility = 'hidden';
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Show success message
+        const notification = document.createElement('div');
+        notification.className = 'notification fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-md shadow-lg';
+        notification.textContent = 'Report downloaded successfully';
+        document.body.appendChild(notification);
+        
+        // Remove notification after 3 seconds
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    });
 });

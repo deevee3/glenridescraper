@@ -172,11 +172,19 @@
             <div class="relative top-20 mx-auto p-5 border w-3/4 shadow-lg rounded-md bg-white">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xl font-semibold">Search History</h3>
-                    <button id="closeHistory" class="text-gray-500 hover:text-gray-700">
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
+                    <div class="flex items-center space-x-2">
+                        <button id="downloadHistoryReport" class="bg-blue-600 text-white py-1 px-3 rounded-md text-sm hover:bg-blue-700 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                            Download Report
+                        </button>
+                        <button id="closeHistory" class="text-gray-500 hover:text-gray-700">
+                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 <div id="historyList" class="space-y-4">
                     <!-- History items will be inserted here -->
